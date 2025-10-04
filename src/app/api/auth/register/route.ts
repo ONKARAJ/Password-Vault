@@ -66,8 +66,14 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Registration error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    console.error('Error details:', {
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not set'
+    });
     return NextResponse.json<AuthResponse>(
-      { success: false, message: 'Internal server error' },
+      { success: false, message: `Registration failed: ${errorMessage}` },
       { status: 500 }
     );
   }
